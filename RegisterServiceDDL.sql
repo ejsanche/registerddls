@@ -19,7 +19,7 @@ CREATE TABLE employee (
   active boolean,
   role Classification,
   password character varying(32),
-  manager foreign key references employee(id),
+  manager int references employee(id),
   createdon timestamp without time zone NOT NULL DEFAULT now(),
   PRIMARY KEY (id)
 ) WITH (
