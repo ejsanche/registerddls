@@ -10,6 +10,22 @@ CREATE TABLE product (
   OIDS=FALSE
 );
 
+CREATE TYPE Classification AS ENUM ('General Manager', 'Shift Manager', 'Cashier')
+CREATE TABLE employee (
+  id uuid NOT NULL,
+  fName character varying(32) NOT NULL DEFAULT(''),
+  lName character varying(32) NOT NULL DEFAULT(''),
+  Eid int,
+  active boolean,
+  role Classification,
+  password character varying(32),
+  manager foreign key references employee(id),
+  createdon timestamp without time zone NOT NULL DEFAULT now(),
+  PRIMARY KEY (id)
+) WITH (
+  OIDS=FALSE
+);
+
 CREATE INDEX ix_product_lookupcode
   ON product
   USING btree
