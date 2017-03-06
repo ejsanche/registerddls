@@ -10,21 +10,6 @@ CREATE TABLE product (
   OIDS=FALSE
 );
 
-CREATE TYPE Classification AS ENUM ('General Manager', 'Shift Manager', 'Cashier')
-CREATE TABLE employee (
-  id uuid NOT NULL,
-  fName character varying(32) NOT NULL DEFAULT(''),
-  lName character varying(32) NOT NULL DEFAULT(''),
-  Eid int,
-  active boolean,
-  role Classification,
-  password character varying(32),
-  manager int references employee(id),
-  createdon timestamp without time zone NOT NULL DEFAULT now(),
-  PRIMARY KEY (id)
-) WITH (
-  OIDS=FALSE
-);
 
 CREATE INDEX ix_product_lookupcode
   ON product
@@ -57,13 +42,15 @@ CREATE TYPE employee_role AS ENUM('gmanager','smanager','cashier');-- general ma
 
 CREATE TABLE employee (
   id serial NOT NULL,
-  fname varchar(32) NOT NULL,
-  lname VARCHAR(32) NOT null,
+  fname VARCHAR(32) NOT NULL,
+  lname VARCHAR(32) NOT NULL,
   employeeId VARCHAR(32) NOT NULL,
   status BOOLEAN,--active or inactive
   role employee_role,-- general manager, shift manager, cashier.
-  manager VARCHAR (32), -- (NOT SURE) may be blank ( (This is a foreign key to another record in the Employee table, may be empty))
-  password varchar (80) NOT NULL,  --save hash 
+  manager VARCHAR (32) references employee(id), -- I believe that this is how make manager a foreign key
+  password VARCHAR (80) NOT NULL,  --save hash 
   createdon timestamp without time zone NOT NULL DEFAULT now(),
   CONSTRAINT record_rkey PRIMARY KEY (id)
+  ) WITH (	
+  OIDS=FALSE		--This is in the provided table so I thought it would be a good idea to include it
 );
