@@ -35,3 +35,19 @@ INSERT INTO product VALUES (
      , 150
      , current_timestamp
 );
+
+--NEW TABLE FOR EMPLOYEE
+CREATE TYPE employee_role AS ENUM('gmanager','smanager','cashier');-- general manager, shift manager, cashier.
+
+CREATE TABLE employee (
+  id serial NOT NULL,
+  fname varchar(32) NOT NULL,
+  lname VARCHAR(32) NOT null,
+  employeeId VARCHAR(32) NOT NULL,
+  status BOOLEAN,--active or inactive
+  role employee_role,-- general manager, shift manager, cashier.
+  manager VARCHAR (32), -- (NOT SURE) may be blank ( (This is a foreign key to another record in the Employee table, may be empty))
+  password varchar (80) NOT NULL,  --save hash 
+  createdon timestamp without time zone NOT NULL DEFAULT now(),
+  CONSTRAINT record_rkey PRIMARY KEY (id)
+);
