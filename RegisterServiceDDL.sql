@@ -47,7 +47,7 @@ CREATE TABLE employee (
   employeeId VARCHAR(32) NOT NULL,
   status BOOLEAN,--active or inactive
   role employee_role,-- general manager, shift manager, cashier.
-  manager VARCHAR (32) references employee(id), -- I believe that this is how make manager a foreign key
+  manager int references employee(id), -- I believe that this is how make manager a foreign key
   password VARCHAR (80) NOT NULL,  --save hash 
   createdon timestamp without time zone NOT NULL DEFAULT now(),
   CONSTRAINT record_rkey PRIMARY KEY (id)
