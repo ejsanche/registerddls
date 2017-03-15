@@ -10,7 +10,6 @@ CREATE TABLE product (
   OIDS=FALSE
 );
 
-
 CREATE INDEX ix_product_lookupcode
   ON product
   USING btree
@@ -37,20 +36,22 @@ INSERT INTO product VALUES (
      , current_timestamp
 );
 
---NEW TABLE FOR EMPLOYEE
-CREATE TYPE employee_role AS ENUM('gmanager','smanager','cashier');-- general manager, shift manager, cashier.
-
 CREATE TABLE employee (
-  id serial NOT NULL,
-  fname VARCHAR(32) NOT NULL,
-  lname VARCHAR(32) NOT NULL,
-  employeeId VARCHAR(32) NOT NULL,
-  status BOOLEAN,--active or inactive
-  role employee_role,-- general manager, shift manager, cashier.
-  manager int references employee(id), -- I believe that this is how make manager a foreign key
-  password VARCHAR (80) NOT NULL,  --save hash 
+  id uuid NOT NULL,
+  employeeid character varying(32) NOT NULL DEFAULT(''),
+  firstname character varying(128) NOT NULL DEFAULT(''),
+  lastname character varying(128) NOT NULL DEFAULT(''),
+  password character varying(512) NOT NULL DEFAULT(''),
+  active boolean NOT NULL DEFAULT(FALSE), 
+  classification int NOT NULL DEFAULT(0),
+  managerid uuid NOT NULL,
   createdon timestamp without time zone NOT NULL DEFAULT now(),
-  CONSTRAINT record_rkey PRIMARY KEY (id)
-  ) WITH (	
-  OIDS=FALSE		--This is in the provided table so I thought it would be a good idea to include it
+  CONSTRAINT employee_pkey PRIMARY KEY (id)
+) WITH (
+  OIDS=FALSE
 );
+
+CREATE INDEX ix_employee_employeeid
+  ON employee
+  USING hash(employeeid);
+
