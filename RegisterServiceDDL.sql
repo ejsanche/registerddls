@@ -1,56 +1,79 @@
 CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE product (
-  id uuid NOT NULL,
-  lookupcode character varying(32) NOT NULL DEFAULT(''),
-  count int NOT NULL DEFAULT(0),
-  createdon timestamp without time zone NOT NULL DEFAULT now(),
-  CONSTRAINT product_pkey PRIMARY KEY (id)
+	price numeric CHECK (price > 0)                          /* item price cannot be zero or less */
+	status boolean,
+	id uuid NOT NULL,
+	lookupcode character varying(32) NOT NULL DEFAULT(''),
+	quantity int NOT NULL DEFAULT(0),
+	createdon timestamp without time zone NOT NULL DEFAULT now(),
+	CONSTRAINT product_pkey PRIMARY KEY (id)
 ) WITH (
-  OIDS=FALSE
+	OIDS=FALSE
 );
-
 
 CREATE INDEX ix_product_lookupcode
-  ON product
-  USING btree
-  (lower(lookupcode::text) COLLATE pg_catalog."default");
+	ON product
+	USING btree
+	(lower(lookupcode::text) COLLATE pg_catalog."default");
 
 INSERT INTO product VALUES (
-       uuid_generate_v4()
-     , 'lookupcode1'
-     , 100
-     , current_timestamp
+	uuid_generate_v4()
+	, 'lookupcode1'
+	, 100
+	, current_timestamp
 );
 
 INSERT INTO product VALUES (
-       uuid_generate_v4()
-     , 'lookupcode1'
-     , 125
-     , current_timestamp
+	uuid_generate_v4()
+	, 'lookupcode1'
+	, 125
+	, current_timestamp
 );
 
 INSERT INTO product VALUES (
-       uuid_generate_v4()
-     , 'lookupcode3'
-     , 150
-     , current_timestamp
+	uuid_generate_v4()
+	, 'lookupcode3'
+	, 150
+	, current_timestamp
 );
-
---NEW TABLE FOR EMPLOYEE
-CREATE TYPE employee_role AS ENUM('gmanager','smanager','cashier');-- general manager, shift manager, cashier.
 
 CREATE TABLE employee (
-  id serial NOT NULL,
-  fname VARCHAR(32) NOT NULL,
-  lname VARCHAR(32) NOT NULL,
-  employeeId VARCHAR(32) NOT NULL,
-  status BOOLEAN,--active or inactive
-  role employee_role,-- general manager, shift manager, cashier.
-  manager int references employee(id), -- changed to int because id, which it is referencing, is an int
-  password VARCHAR (80) NOT NULL,  --save hash 
-  createdon timestamp without time zone NOT NULL DEFAULT now(),
-  CONSTRAINT record_rkey PRIMARY KEY (id)
-  ) WITH (	
-  OIDS=FALSE		--This is in the provided table so I thought it would be a good idea to include it
+	id uuid NOT NULL,
+	employeeid character varying(32) NOT NULL DEFAULT(''),
+	firstname character varying(128) NOT NULL DEFAULT(''),
+	lastname character varying(128) NOT NULL DEFAULT(''),
+	password character varying(512) NOT NULL DEFAULT(''),
+	active boolean NOT NULL DEFAULT(FALSE),
+	classification int NOT NULL DEFAULT(0),
+	managerid uuid NOT NULL,
+	createdon timestamp without time zone NOT NULL DEFAULT now(),
+	CONSTRAINT employee_pkey PRIMARY KEY (id)
+) WITH (
+	OIDS=FALSE
+);
+
+CREATE INDEX ix_employee_employeeid
+	ON employee
+	USING hash(employeeid);
+
+CREATE TABLE transaction_table (                                         /* transaction is apparently a key word */
+	record_id numeric NOT NULL,
+	cashier_id character varying (32) references employee(employeeid),
+	total_amount numeric CHECK (price > 0),                              /* cost should never be less than or equal to zero */
+	transaction_type enum('return', 'sale') NOT NULL DEFAULT('sale'),    /* sales are probably more common */
+	created_on timestamp without time zone NOT NULL DEFAULT now(),
+	CONSTRAINT primary_record PRIMARY KEY (record_id)
+) WITH (
+	OIDS=FALSE
+);
+
+CREATE TABLE transaction_entry (
+	record_id numeric NOT NULL references transaction_table(record_id),
+	product_sold integer[] references product(id),
+	num_sold integer[],
+	price_sold integer[],
+	CONSTRAINT TE_PK PRIMARY KEY (record_id)
+) WITH (
+	OIDS=FALSE
 );
