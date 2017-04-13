@@ -1,7 +1,7 @@
 CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE product (
-	price numeric CHECK (price > 0)                          /* item price cannot be zero or less */
+	price numeric CHECK (price > 0),                          /* item price cannot be zero or less */
 	status boolean,
 	id uuid NOT NULL,
 	lookupcode character varying(32) NOT NULL DEFAULT(''),
