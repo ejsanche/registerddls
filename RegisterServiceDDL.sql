@@ -1,7 +1,7 @@
 CREATE EXTENSION "uuid-ossp";
 
 CREATE TABLE product (
-	price numeric CHECK (price > 0)                          /* item price cannot be zero or less */
+	price numeric CHECK (price > 0),                         /* item price cannot be zero or less */
 	status boolean,
 	id uuid NOT NULL,
 	lookupcode character varying(32) NOT NULL DEFAULT(''),
@@ -66,6 +66,7 @@ CREATE TABLE transaction_table (                                         /* tran
 	record_id numeric NOT NULL,
 	cashier_id character varying (32) references employee(employeeid),
 	total_amount numeric CHECK (price > 0),                              /* cost should never be less than or equal to zero */
+	transaction_type e_transaction NOT NULL,                              /* sales are probably more common */
 	reference_id numeric NOT NULL,                                       /* should reference something, but that table doesn't exist yet */
 	created_on timestamp without time zone NOT NULL DEFAULT now(),
 	CONSTRAINT primary_record PRIMARY KEY (record_id)
