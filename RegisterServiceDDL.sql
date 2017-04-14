@@ -65,7 +65,7 @@ CREATE TYPE e_transaction AS ENUM (
 CREATE TABLE transaction_table (                                         /* transaction is apparently a key word */
 	record_id numeric NOT NULL,
 	cashier_id character varying (32) references employee(employeeid),
-	total_amount numeric CHECK (price > 0),                              /* cost should never be less than or equal to zero */
+	total_amount numeric CHECK (total_amount > 0),                              /* cost should never be less than or equal to zero */
 	transaction_type e_transaction NOT NULL,                              /* sales are probably more common */
 	reference_id numeric NOT NULL,                                       /* should reference something, but that table doesn't exist yet */
 	created_on timestamp without time zone NOT NULL DEFAULT now(),
