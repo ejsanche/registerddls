@@ -17,26 +17,11 @@ CREATE INDEX ix_product_lookupcode
 	USING btree
 	(lower(lookupcode::text) COLLATE pg_catalog."default");
 
-INSERT INTO product VALUES (
-	uuid_generate_v4()
-	, 'lookupcode1'
-	, 100
-	, current_timestamp
-);
 
-INSERT INTO product VALUES (
-	uuid_generate_v4()
-	, 'lookupcode1'
-	, 125
-	, current_timestamp
-);
 
-INSERT INTO product VALUES (
-	uuid_generate_v4()
-	, 'lookupcode3'
-	, 150
-	, current_timestamp
-);
+INSERT INTO product VALUES ( 1.25 ,true ,uuid_generate_v4() , 'lookupcode1' , 100 );
+INSERT INTO product VALUES ( 2.25 ,true ,uuid_generate_v4() , 'lookupcode2' , 50 );
+INSERT INTO product VALUES ( 2.85 ,true ,uuid_generate_v4() , 'lookupcode2' , 0 );
 
 CREATE TABLE employee (
 	id uuid NOT NULL,
@@ -52,6 +37,8 @@ CREATE TABLE employee (
 ) WITH (
 	OIDS=FALSE
 );
+
+INSERT INTO employee VALUES (uuid_generate_v4() , 'employee1' , 'Noelis', 'Gutierrez','1234',true,0,uuid_generate_v4() );
 
 CREATE INDEX ix_employee_employeeid
 	ON employee
